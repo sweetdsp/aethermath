@@ -11,6 +11,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("aether-theme");if(t)document.documentElement.classList.add(t)}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-screen font-sans">{children}</body>
     </html>
   );
