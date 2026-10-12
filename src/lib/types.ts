@@ -45,13 +45,20 @@ export type Widget = {
   caption?: string;
 };
 
+export type DemoKind = "fractal" | "tesseract" | "ricci" | "genus" | "padic" | "roots" | "abc" | "spectral";
+
 export type Lesson = {
   slug: string;
   title: string;
   summary: string;
   minutes: number;
+  /** Advanced lessons show a note that they build intuition through toy models */
+  level?: "advanced" | "research";
   concept: Block[];
-  widget: Widget;
+  /** Declarative slider/graph widget */
+  widget?: Widget;
+  /** Or a purpose-built interactive demo */
+  demo?: DemoKind;
   problems: Problem[];
 };
 

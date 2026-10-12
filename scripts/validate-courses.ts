@@ -1,6 +1,7 @@
 import { courses } from "../src/data/courses";
 import { checkAnswer, compile } from "../src/lib/expr";
 
+const DEMOS = ["fractal", "tesseract", "ricci", "genus", "padic", "roots", "abc", "spectral"];
 let errors = 0;
 const bad = (msg: string) => { errors++; console.error("✗", msg); };
 const ids = new Set<string>();
@@ -11,11 +12,14 @@ for (const c of courses) {
     const where = `${c.topic}/${l.slug}`;
     if (slugs.has(l.slug)) bad(`${where}: duplicate slug`);
     slugs.add(l.slug);
-    const keys = l.widget.sliders.map((s) => s.key);
-    const sample = Object.fromEntries(keys.map((k) => [k, l.widget.sliders.find((s) => s.key === k)!.initial]));
-    const exprs = [...l.widget.plots.map((p) => p.expr), ...(l.widget.points ?? []).flatMap((p) => [p.x, p.y]),
-      ...(l.widget.readouts ?? []).flatMap((r) => (r.expr ? [r.expr] : []))];
-    for (const t of l.widget.equation.matchAll(/\[\[[+*=]?([^\]]+)\]\]/g)) exprs.push(t[1]);
+    if (!l.widget && !l.demo) bad(`${where}: needs a widget or a demo`);
+    if (l.demo && !DEMOS.includes(l.demo)) bad(`${where}: unknown demo "${l.demo}"`);
+    const w = l.widget ?? { sliders: [], plots: [], equation: "" };
+    const keys = w.sliders.map((s) => s.key);
+    const sample = Object.fromEntries(keys.map((k) => [k, w.sliders.find((s) => s.key === k)!.initial]));
+    const exprs = [...w.plots.map((p) => p.expr), ...(w.points ?? []).flatMap((p) => [p.x, p.y]),
+      ...(w.readouts ?? []).flatMap((r) => (r.expr ? [r.expr] : []))];
+    for (const t of w.equation.matchAll(/\[\[[+*=]?([^\]]+)\]\]/g)) exprs.push(t[1]);
     for (const e of exprs) {
       try {
         const k = compile(e, keys);

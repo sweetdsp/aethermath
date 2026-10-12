@@ -1,8 +1,11 @@
 import type { Course, Lesson } from "@/lib/types";
 import { algebra } from "./algebra";
 import { calculus } from "./calculus";
+import { geometry } from "./geometry";
+import { topology } from "./topology";
+import { numberTheory } from "./numbertheory";
 
-export const courses: Course[] = [algebra, calculus];
+export const courses: Course[] = [algebra, calculus, geometry, topology, numberTheory];
 
 export const getCourse = (topic: string) => courses.find((c) => c.topic === topic);
 

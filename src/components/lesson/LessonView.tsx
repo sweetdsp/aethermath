@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Bot, Trophy } from "lucide-react";
 import type { Lesson, Problem } from "@/lib/types";
 import { LessonWidget } from "@/components/math/LessonWidget";
+import { LessonDemo } from "@/components/demos/LessonDemo";
 import { MathRenderer, MathText } from "@/components/math/MathRenderer";
 import { ProblemCard } from "@/components/practice/ProblemCard";
 import { CopilotPanel } from "@/components/ai/CopilotPanel";
@@ -66,6 +67,12 @@ export function LessonView({ topic, courseTitle, lesson, index, total, prev, nex
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">{lesson.title}</h1>
             <p className="mt-1 text-sm text-muted">{lesson.summary} · {lesson.minutes} min</p>
+            {lesson.level && (
+              <p className="mt-3 rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs leading-relaxed text-muted">
+                <span className="font-medium text-fg">{lesson.level === "research" ? "Research-level topic." : "Advanced topic."}</span>{" "}
+                This lesson builds intuition with simplified examples and toy models. The full theory needs university-level background.
+              </p>
+            )}
           </div>
           {lesson.concept.map((b, i) =>
             b.type === "p" ? <p key={i} className="leading-relaxed"><MathText text={b.text} /></p> :
@@ -75,7 +82,8 @@ export function LessonView({ topic, courseTitle, lesson, index, total, prev, nex
               <p className="text-sm leading-relaxed"><MathText text={b.text} /></p>
             </Card>,
           )}
-          <LessonWidget widget={lesson.widget} key={lesson.slug} />
+          {lesson.widget && <LessonWidget widget={lesson.widget} key={lesson.slug} />}
+          {lesson.demo && <LessonDemo kind={lesson.demo} key={lesson.slug} />}
         </section>
 
         {/* Center: practice */}

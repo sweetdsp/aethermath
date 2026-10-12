@@ -1,5 +1,5 @@
 import { courses } from "./courses";
-import { Sigma, Shapes, TrendingUp, BarChart3, type LucideIcon } from "lucide-react";
+import { Sigma, Shapes, TrendingUp, BarChart3, Orbit, Hash, type LucideIcon } from "lucide-react";
 
 export type Topic = {
   slug: string;
@@ -38,11 +38,29 @@ export const topics: Topic[] = [
   {
     slug: "geometry",
     title: "Geometry",
-    tagline: "Shapes, angles and proofs, built by hand.",
+    tagline: "Fractals, the tesseract and Ricci flow: shapes beyond the plane.",
     icon: Shapes,
     gradient: "from-emerald-500/25 to-cyan-500/10",
-    firstLesson: null,
-    lessons: 0,
+    firstLesson: first("geometry"),
+    lessons: count("geometry"),
+  },
+  {
+    slug: "topology",
+    title: "Topology & Algebra",
+    tagline: "K-theory, cohomology and spectral sequences: the shape of structure.",
+    icon: Orbit,
+    gradient: "from-sky-500/25 to-indigo-500/10",
+    firstLesson: first("topology"),
+    lessons: count("topology"),
+  },
+  {
+    slug: "number-theory",
+    title: "Number Theory",
+    tagline: "p-adics, reciprocity, elliptic curves and the abc conjecture.",
+    icon: Hash,
+    gradient: "from-rose-500/25 to-amber-500/10",
+    firstLesson: first("number-theory"),
+    lessons: count("number-theory"),
   },
   {
     slug: "statistics",
