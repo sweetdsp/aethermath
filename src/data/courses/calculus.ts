@@ -1,0 +1,146 @@
+import type { Course } from "@/lib/types";
+import { ex, mc } from "./helpers";
+
+const r = String.raw;
+const f = "x^2/4";
+
+export const calculus: Course = {
+  topic: "calculus",
+  title: "Introduction to Derivatives",
+  lessons: [
+    {
+      slug: "intro-to-derivatives",
+      title: "Average Rate of Change",
+      summary: "The slope of a secant line measures how fast a function changes between two points.",
+      minutes: 8,
+      concept: [
+        { type: "p", text: r`A curve bends, so its slope is different everywhere. A first step: measure the slope between two points $P$ and $Q$ on the curve. That slope of the secant line is the average rate of change.` },
+        { type: "math", tex: r`\dfrac{f(x_0+h)-f(x_0)}{h}` },
+        { type: "callout", title: "Average, not instant", text: r`This tells you the slope over a whole interval of width $h$, not at a single point. That is where derivatives come in next.` },
+        { type: "p", text: r`Move $x_0$ and $h$ and watch the secant line pivot.` },
+      ],
+      widget: {
+        sliders: [
+          { key: "x0", label: "x₀", min: -4, max: 4, step: 0.1, initial: 1 },
+          { key: "h", label: "h", min: 0.5, max: 4, step: 0.1, initial: 2 },
+        ],
+        plots: [{ expr: f, label: "f(x) = x²/4" }],
+        equation: r`\dfrac{f(x_0+h)-f(x_0)}{h} = [[=((x0+h)^2/4-x0^2/4)/h]]`,
+        xRange: [-6, 6], yRange: [-1, 9],
+        points: [{ x: "x0", y: "x0^2/4", label: "P" }, { x: "x0+h", y: "(x0+h)^2/4", label: "Q" }],
+        secant: { plot: 0, x: "x0", h: "h" },
+        readouts: [{ label: "secant slope", expr: "((x0+h)^2/4-x0^2/4)/h" }],
+      },
+      problems: [
+        ex("cal1-1", r`Find the average rate of change of $f(x)=x^2$ from $x=1$ to $x=3$.`, ["4"],
+          [r`Compute $f(3)$ and $f(1)$.`, r`Divide $f(3)-f(1)$ by $3-1$.`],
+          ["What are f(1) and f(3)?", "How much did x change?"], r`$\dfrac{9-1}{3-1}=4$.`),
+        ex("cal1-2", r`For $f(x)=2x+1$, find the average rate of change from $x=0$ to $x=5$.`, ["2"],
+          [r`$f(0)=1$ and $f(5)=11$.`], ["What do you notice about the rate for a straight line?", "What is the slope of 2x+1?"],
+          r`$\dfrac{11-1}{5}=2$, the slope of the line. A line has the same rate everywhere.`),
+        mc("cal1-3", "The slope of a secant line through two points on a curve equals…", ["the average rate of change between them", "the value of f at the first point", "the area under the curve", "the instantaneous rate at the first point"], 0,
+          ["A secant slope is rise over run between two points."], ["What does rise over run measure on a curve?", "Is it about one point or two?"],
+          "A secant uses two points, so it measures the average rate between them."),
+        ex("cal1-4", r`For $f(x)=x^2$, simplify $\dfrac{f(2+h)-f(2)}{h}$.`, ["4+h"],
+          [r`Expand $(2+h)^2=4+4h+h^2$.`, r`Subtract $f(2)=4$, then divide by $h$.`],
+          [r`What does $(2+h)^2$ expand to?`, "What can you cancel before dividing?"], r`$\dfrac{4h+h^2}{h}=4+h$.`, 15),
+      ],
+    },
+    {
+      slug: "limit-definition",
+      title: "From Secant to Tangent: the Limit",
+      summary: "Shrink h toward zero and the secant slope settles on the instantaneous rate.",
+      minutes: 9,
+      concept: [
+        { type: "p", text: r`What if the two points are almost on top of each other? As $h$ shrinks toward $0$, the secant line turns into the tangent line, and its slope settles on a single number.` },
+        { type: "math", tex: r`f'(x) = \lim_{h\to 0}\dfrac{f(x+h)-f(x)}{h}` },
+        { type: "callout", title: "The derivative", text: r`The derivative $f'(x)$ is the slope of the tangent line: the instantaneous rate of change.` },
+        { type: "p", text: r`Drag $h$ toward $0.05$. Compare the secant slope with the true slope.` },
+      ],
+      widget: {
+        sliders: [
+          { key: "x0", label: "x₀", min: -4, max: 4, step: 0.1, initial: 1 },
+          { key: "h", label: "h", min: 0.05, max: 3, step: 0.05, initial: 2 },
+        ],
+        plots: [{ expr: f, label: "f(x) = x²/4" }],
+        equation: r`\text{secant slope} = [[=((x0+h)^2/4-x0^2/4)/h]]`,
+        xRange: [-6, 6], yRange: [-1, 9],
+        points: [{ x: "x0", y: "x0^2/4", label: "P" }, { x: "x0+h", y: "(x0+h)^2/4", label: "Q" }],
+        secant: { plot: 0, x: "x0", h: "h" },
+        readouts: [
+          { label: "secant slope", expr: "((x0+h)^2/4-x0^2/4)/h" },
+          { label: "true slope f′(x₀)", expr: "x0/2" },
+        ],
+      },
+      problems: [
+        ex("cal2-1", r`For $f(x)=x^2$, simplify $\dfrac{f(x+h)-f(x)}{h}$.`, ["2x+h"],
+          [r`$(x+h)^2=x^2+2xh+h^2$.`], [r`What survives after subtracting $x^2$?`, "Can you factor out h?"], r`$\dfrac{2xh+h^2}{h}=2x+h$.`),
+        ex("cal2-2", r`Now let $h\to0$ in $2x+h$. What does the expression become?`, ["2x"],
+          [r`What happens to $h$ when it goes to $0$?`], ["Which term vanishes?", "What is left?"], r`So $f'(x)=2x$ for $f(x)=x^2$.`, 5),
+        mc("cal2-3", "As h shrinks toward 0, the secant line becomes…", ["the tangent line", "a horizontal line", "a vertical line", "the x-axis"], 0,
+          ["Try it in the widget: drag h down."], ["What happens to point Q as h gets tiny?", "What line touches a curve at exactly one point?"],
+          "The two points merge and the secant turns into the tangent."),
+        ex("cal2-4", r`Using $f'(x)=2x$ for $f(x)=x^2$, what is the slope of the tangent at $x=5$?`, ["10"],
+          [r`Plug $x=5$ into $2x$.`], ["What does f′ give you?", "What is 2·5?"], r`$f'(5)=2\cdot5=10$.`),
+      ],
+    },
+    {
+      slug: "tangent-lines",
+      title: "Seeing the Derivative as a Graph",
+      summary: "Slide a point along sin(x): its tangent slope traces out cos(x).",
+      minutes: 9,
+      concept: [
+        { type: "p", text: r`At every point of a curve there is a tangent slope. Plot all those slopes as their own function and you get the derivative graph.` },
+        { type: "math", tex: r`\dfrac{d}{dx}\sin x = \cos x` },
+        { type: "callout", title: "Watch the dashed curve", text: r`The height of the dashed point equals the slope of the tangent to the solid curve. Where the tangent is flat, the dashed curve is at $0$.` },
+        { type: "p", text: r`Drag the point along $\sin x$ and watch the tangent tilt.` },
+      ],
+      widget: {
+        sliders: [{ key: "x0", label: "x₀", min: -6, max: 6, step: 0.05, initial: 1 }],
+        plots: [{ expr: "sin(x)", label: "f(x) = sin x" }, { expr: "cos(x)", color: "var(--accent-2)", dashed: true, label: "f′(x)" }],
+        equation: r`f'([[x0]]) = \cos([[x0]]) = [[=cos(x0)]]`,
+        xRange: [-7, 7], yRange: [-3, 3],
+        tracer: { plot: 0, param: "x0", tangent: true },
+        points: [{ x: "x0", y: "cos(x0)", label: "f′(x₀)" }],
+        readouts: [{ label: "tangent slope", derivativeOf: { plot: 0, at: "x0" } }],
+      },
+      problems: [
+        mc("cal3-1", r`Where does $\sin x$ have a horizontal tangent (slope $0$)?`, ["at its peaks and valleys", "where it crosses the x-axis", "nowhere", "only at x = 0"], 0,
+          ["A horizontal tangent is flat. Where does the curve stop rising and start falling?"], ["Where is sin x neither rising nor falling?", "What is the dashed curve doing there?"],
+          "At a peak or valley the curve turns around, so the slope is momentarily $0$."),
+        mc("cal3-2", r`When $\sin x$ is increasing, the dashed derivative curve is…`, ["above the x-axis (positive)", "below the x-axis (negative)", "exactly zero", "undefined"], 0,
+          ["Increasing means the tangent slopes upward."], ["What sign does an upward slope have?", "Where is the dashed curve at those x values?"],
+          "An increasing function has positive slope, so its derivative is positive."),
+        ex("cal3-3", r`The derivative of $\sin x$ is $\cos x$. What is the tangent slope of $\sin x$ at $x=0$?`, ["1"],
+          [r`Compute $\cos 0$.`], ["What is cos(0)?", "Does it match the widget at x₀ = 0?"], r`$\cos 0=1$.`),
+        ex("cal3-4", r`If $f(x)=x^2$, what is the slope of the tangent at $x=-3$? (Recall $f'(x)=2x$.)`, ["-6"],
+          [r`Replace $x$ with $-3$ in $2x$.`], ["What is f′ at x = −3?", "Should it slope up or down there?"], r`$f'(-3)=2(-3)=-6$: the curve is heading downward.`, 15),
+      ],
+    },
+    {
+      slug: "power-rule",
+      title: "The Power Rule",
+      summary: "A shortcut: bring the exponent down and subtract one.",
+      minutes: 9,
+      concept: [
+        { type: "p", text: r`Computing limits every time is slow. For powers of $x$ there is a pattern.` },
+        { type: "math", tex: r`\dfrac{d}{dx}x^n = n\,x^{n-1}` },
+        { type: "callout", title: "Two rules that come along", text: r`Constants multiply through: $(cf)'=c\,f'$. Sums split: $(f+g)'=f'+g'$. The derivative of a constant is $0$.` },
+        { type: "p", text: r`Change $n$ and compare $x^n$ with its derivative (dashed).` },
+      ],
+      widget: {
+        sliders: [{ key: "n", label: "exponent n", min: 1, max: 5, step: 1, initial: 3 }],
+        plots: [{ expr: "x^n", label: "xⁿ" }, { expr: "n*x^(n-1)", color: "var(--accent-2)", dashed: true, label: "derivative" }],
+        equation: r`\dfrac{d}{dx}x^{[[n]]} = [[n]]\,x^{[[=n-1]]}`,
+        xRange: [-3, 3], yRange: [-5, 5],
+      },
+      problems: [
+        ex("cal4-1", r`Differentiate $f(x)=x^4$.`, ["4x^3"], [r`Bring down the $4$, subtract $1$ from the exponent.`], ["What is n here?", "What is n − 1?"], r`$f'(x)=4x^3$.`),
+        ex("cal4-2", r`Differentiate $f(x)=3x^2$.`, ["6x"], [r`The constant $3$ stays; differentiate $x^2$.`], ["What is the derivative of x²?", "What happens to the 3?"], r`$3\cdot2x=6x$.`),
+        ex("cal4-3", r`Find $f'(x)$ for $f(x)=x^3+2x$.`, ["3x^2+2"], [r`Differentiate each term separately.`, r`$2x=2x^1$.`], ["What is the derivative of x³?", "What is the derivative of 2x?"], r`$3x^2+2$.`, 15),
+        ex("cal4-4", r`What is the slope of the tangent to $f(x)=x^3$ at $x=2$?`, ["12"], [r`First find $f'(x)$, then plug in $2$.`], ["What is f′(x)?", "What is f′(2)?"], r`$f'(x)=3x^2$, so $f'(2)=12$.`, 15),
+        mc("cal4-5", r`What is the derivative of the constant $7$?`, ["0", "7", "1", "7x"], 0, ["A constant is a horizontal line. What is its slope?"], ["What does the graph of y = 7 look like?", "How steep is it?"], "The graph is flat, so its slope is $0$."),
+      ],
+    },
+  ],
+};

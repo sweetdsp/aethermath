@@ -17,7 +17,7 @@ const FUNCS: Record<string, (x: number) => number> = {
 const CONSTS: Record<string, number> = { pi: Math.PI, e: Math.E };
 const FUNC_NAMES = Object.keys(FUNCS).sort((a, b) => b.length - a.length);
 
-function tokenize(src: string): Tok[] {
+function tokenize(src: string, names: string[]): Tok[] {
   const s = src
     .replace(/[−–]/g, "-").replace(/[×·]/g, "*").replace(/÷/g, "/")
     .replace(/²/g, "^2").replace(/³/g, "^3").replace(/π/g, "pi").replace(/\s+/g, "");
@@ -32,6 +32,8 @@ function tokenize(src: string): Tok[] {
       i += m[0].length;
     } else if (/[A-Za-z]/.test(c)) {
       const rest = s.slice(i);
+      const named = names.find((n) => rest.startsWith(n));
+      if (named) { out.push({ t: "id", v: named }); i += named.length; continue; }
       const fn = FUNC_NAMES.find((n) => rest.startsWith(n + "("));
       if (fn) { out.push({ t: "fn", v: fn }); i += fn.length; }
       else if (rest.startsWith("pi")) { out.push({ t: "id", v: "pi" }); i += 2; }
@@ -46,8 +48,13 @@ function tokenize(src: string): Tok[] {
 
 export type Compiled = { fn: Node; vars: string[] };
 
-export function compile(src: string): Compiled {
-  const toks = tokenize(src);
+/**
+ * `names` lists multi-character variable names (e.g. "x0", "y2") that must be
+ * read as one variable instead of implicit multiplication like x·0.
+ */
+export function compile(src: string, names: string[] = []): Compiled {
+  const sorted = [...names].sort((a, b) => b.length - a.length);
+  const toks = tokenize(src, sorted);
   if (!toks.length) throw new ParseError("Empty expression");
   const vars = new Set<string>();
   let p = 0;

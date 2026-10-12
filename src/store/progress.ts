@@ -14,6 +14,8 @@ type ProgressState = {
   soundOn: boolean;
   visit: (l: LastLesson) => void;
   addXp: (n: number) => void;
+  /** Marks a problem solved (once) and awards its XP */
+  markSolved: (id: string, xp: number) => void;
   toggleSound: () => void;
 };
 
@@ -39,6 +41,11 @@ export const useProgress = create<ProgressState>()(
           next = lastActiveDay && daysBetween(lastActiveDay, t) === 1 ? streak + 1 : 1;
         }
         set({ xp: xp + n, streak: next, lastActiveDay: t });
+      },
+      markSolved: (id, xp) => {
+        if (get().completed[id]) return;
+        set((s) => ({ completed: { ...s.completed, [id]: true } }));
+        get().addXp(xp);
       },
       toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
     }),

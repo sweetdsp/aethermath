@@ -15,12 +15,14 @@ type Status = "idle" | "correct" | "wrong" | "invalid";
 type Props = {
   problem: Problem;
   index?: number;
+  /** Already solved in a previous session (shows a badge; no XP is re-awarded by the store) */
+  done?: boolean;
   onSolved?: (p: Problem, attempts: number, hintsUsed: number) => void;
   /** Called when the student asks the tutor for help */
   onStuck?: (p: Problem, attempts: string[], hintsShown: number) => void;
 };
 
-export function ProblemCard({ problem, index, onSolved, onStuck }: Props) {
+export function ProblemCard({ problem, index, done, onSolved, onStuck }: Props) {
   const [input, setInput] = useState("");
   const [picked, setPicked] = useState<number | null>(null);
   const [status, setStatus] = useState<Status>("idle");
@@ -52,7 +54,7 @@ export function ProblemCard({ problem, index, onSolved, onStuck }: Props) {
     <Card className="p-5">
       <div className="mb-3 flex items-center justify-between text-xs text-muted">
         <span>{index !== undefined ? `Problem ${index + 1}` : "Problem"}</span>
-        <span>+{problem.xp} XP</span>
+        <span className={cn(done && "text-success")}>{done ? "Completed ✓" : `+${problem.xp} XP`}</span>
       </div>
       <p className="text-lg leading-relaxed"><MathText text={problem.prompt} /></p>
 

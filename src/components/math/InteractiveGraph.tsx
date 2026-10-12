@@ -9,6 +9,7 @@ export type GraphPoint = {
   /** If set, the point is draggable and reports the new coordinates */
   onDrag?: (x: number, y: number) => void;
 };
+export type GraphLine = { x1: number; y1: number; x2: number; y2: number; color?: string; dashed?: boolean };
 export type Tracer = {
   /** Index into `plots` this point rides on */
   plot: number; x: number; onChange: (x: number) => void; showTangent?: boolean;
@@ -18,6 +19,8 @@ type Props = {
   plots: Plot[];
   points?: GraphPoint[];
   tracer?: Tracer;
+  /** Infinite lines through two points (e.g. secants) */
+  lines?: GraphLine[];
   xRange?: [number, number];
   yRange?: [number, number];
   className?: string;
@@ -31,7 +34,7 @@ function niceStep(span: number, target = 8) {
 }
 const fmt = (n: number) => (Math.abs(n) < 1e-9 ? "0" : String(+n.toFixed(2)));
 
-export function InteractiveGraph({ plots, points = [], tracer, xRange = [-10, 10], yRange = [-6, 6], className }: Props) {
+export function InteractiveGraph({ plots, points = [], tracer, lines = [], xRange = [-10, 10], yRange = [-6, 6], className }: Props) {
   const clipId = useId();
   const svg = useRef<SVGSVGElement>(null);
   const [x0, x1] = xRange, [y0, y1] = yRange;
@@ -107,6 +110,12 @@ export function InteractiveGraph({ plots, points = [], tracer, xRange = [-10, 10
           <path key={i} d={d} fill="none" stroke={plots[i].color ?? "var(--accent)"} strokeWidth={2.5}
             strokeLinecap="round" strokeDasharray={plots[i].dashed ? "6 5" : undefined} />
         ))}
+        {lines.map((l, i) => {
+          if (![l.x1, l.y1, l.x2, l.y2].every(Number.isFinite)) return null;
+          const vertical = Math.abs(l.x2 - l.x1) < 1e-9, m = vertical ? 0 : (l.y2 - l.y1) / (l.x2 - l.x1);
+          const [ax, ay, bx, by] = vertical ? [l.x1, y0, l.x1, y1] : [x0, l.y1 + m * (x0 - l.x1), x1, l.y1 + m * (x1 - l.x1)];
+          return <line key={`ln${i}`} x1={sx(ax)} y1={sy(ay)} x2={sx(bx)} y2={sy(by)} stroke={l.color ?? "var(--accent-2)"} strokeWidth={2} strokeDasharray={l.dashed ? "5 4" : undefined} />;
+        })}
         {tangent && <line x1={sx(tangent[0])} y1={sy(tangent[1])} x2={sx(tangent[2])} y2={sy(tangent[3])} stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="5 4" />}
       </g>
       {points.map((p, i) => (

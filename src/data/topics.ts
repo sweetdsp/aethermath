@@ -1,3 +1,4 @@
+import { courses } from "./courses";
 import { Sigma, Shapes, TrendingUp, BarChart3, type LucideIcon } from "lucide-react";
 
 export type Topic = {
@@ -12,6 +13,9 @@ export type Topic = {
   lessons: number;
 };
 
+const first = (slug: string) => courses.find((c) => c.topic === slug)?.lessons[0]?.slug ?? null;
+const count = (slug: string) => courses.find((c) => c.topic === slug)?.lessons.length ?? 0;
+
 export const topics: Topic[] = [
   {
     slug: "algebra",
@@ -19,8 +23,8 @@ export const topics: Topic[] = [
     tagline: "Linear equations, slopes and the language of change.",
     icon: Sigma,
     gradient: "from-indigo-500/25 to-cyan-500/10",
-    firstLesson: "linear-equations-slopes",
-    lessons: 6,
+    firstLesson: first("algebra"),
+    lessons: count("algebra"),
   },
   {
     slug: "calculus",
@@ -28,8 +32,8 @@ export const topics: Topic[] = [
     tagline: "Derivatives you can see: drag a point, watch the tangent.",
     icon: TrendingUp,
     gradient: "from-fuchsia-500/25 to-indigo-500/10",
-    firstLesson: "intro-to-derivatives",
-    lessons: 6,
+    firstLesson: first("calculus"),
+    lessons: count("calculus"),
   },
   {
     slug: "geometry",
