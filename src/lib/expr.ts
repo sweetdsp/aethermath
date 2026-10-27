@@ -32,10 +32,10 @@ function tokenize(src: string, names: string[]): Tok[] {
       i += m[0].length;
     } else if (/[A-Za-z]/.test(c)) {
       const rest = s.slice(i);
-      const named = names.find((n) => rest.startsWith(n));
-      if (named) { out.push({ t: "id", v: named }); i += named.length; continue; }
       const fn = FUNC_NAMES.find((n) => rest.startsWith(n + "("));
-      if (fn) { out.push({ t: "fn", v: fn }); i += fn.length; }
+      const named = names.find((n) => rest.startsWith(n));
+      if (fn) { out.push({ t: "fn", v: fn }); i += fn.length; } // functions win, so a variable "s" cannot swallow "sqrt("
+      else if (named) { out.push({ t: "id", v: named }); i += named.length; }
       else if (rest.startsWith("pi")) { out.push({ t: "id", v: "pi" }); i += 2; }
       else { out.push({ t: "id", v: c }); i += 1; }
     } else if ("+-*/^(),".includes(c)) {

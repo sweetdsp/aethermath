@@ -4,8 +4,9 @@ import { calculus } from "./calculus";
 import { geometry } from "./geometry";
 import { topology } from "./topology";
 import { numberTheory } from "./numbertheory";
+import { statistics } from "./statistics";
 
-export const courses: Course[] = [algebra, calculus, geometry, topology, numberTheory];
+export const courses: Course[] = [algebra, calculus, geometry, topology, numberTheory, statistics];
 
 export const getCourse = (topic: string) => courses.find((c) => c.topic === topic);
 

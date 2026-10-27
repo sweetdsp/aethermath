@@ -68,7 +68,7 @@ export const topics: Topic[] = [
     tagline: "Distributions, variance and thinking with data.",
     icon: BarChart3,
     gradient: "from-amber-500/25 to-rose-500/10",
-    firstLesson: null,
-    lessons: 0,
+    firstLesson: first("statistics"),
+    lessons: count("statistics"),
   },
 ];

@@ -45,7 +45,7 @@ export type Widget = {
   caption?: string;
 };
 
-export type DemoKind = "fractal" | "tesseract" | "ricci" | "genus" | "padic" | "roots" | "abc" | "spectral";
+export type DemoKind = "fractal" | "tesseract" | "ricci" | "genus" | "padic" | "roots" | "abc" | "spectral" | "spread" | "lln" | "regression";
 
 export type Lesson = {
   slug: string;

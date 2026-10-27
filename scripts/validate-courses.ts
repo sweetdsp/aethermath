@@ -1,7 +1,7 @@
 import { courses } from "../src/data/courses";
 import { checkAnswer, compile } from "../src/lib/expr";
 
-const DEMOS = ["fractal", "tesseract", "ricci", "genus", "padic", "roots", "abc", "spectral"];
+const DEMOS = ["fractal", "tesseract", "ricci", "genus", "padic", "roots", "abc", "spectral", "spread", "lln", "regression"];
 let errors = 0;
 const bad = (msg: string) => { errors++; console.error("✗", msg); };
 const ids = new Set<string>();
